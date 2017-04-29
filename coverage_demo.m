@@ -23,15 +23,26 @@
 
 % Assumptions
 % 1. Now let Map all positive
+
 %% step 1      
 clear all; 
 close all; 
 clc; 
 
+%--------------------------------------
+% Parameter settings
+%--------------------------------------
+% size of arena
+M = 16; 
+N = 10; 
+% distribution for resource allocation
+mu = 10; 
+sigma = 4; 
+
 % init, Map of interest, assigned values by a normal distribution
-Map = abs(normrnd(10, 4, [10, 10])); % all positive abs()
+Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
 % plot the score Map
-% mesh(1:10, 1:10, Map); 
+% mesh(1:M, 1:N, Map); 
 
 % init, Agents and Status
 Agents = [randperm(10,10)',randperm(10,10)']; % Agents(k, 1) is x, Agents(k, 2) is y
