@@ -3,7 +3,7 @@ function plot_interpolated_Map( map, interpolation_a )
 % plot interpolated heatmap "Map"
 % x,y axises are fakeX and fakeY
 
-fig = figure;
+% fig = figure;
  
 % interpolation_accuracy = 5; % 2^5-1 points between every two values in Map
 

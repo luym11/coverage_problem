@@ -50,10 +50,12 @@ Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
 
 % init, Agents and Status
 % number of agents
-nAgents = 12; 
+nAgents = 16; 
 % set up agents position and status
 Agents = [randi(M,[nAgents,1]),randi(N,[nAgents,1])]; % Agents(k, 1) is x, Agents(k, 2) is y
-Status = randi(2,[nAgents, 1])-ones(nAgents, 1); 
+%%
+% Status = randi(2,[nAgents, 1])-ones(nAgents, 1); 
+Status =ones(nAgents, 1);
 % nAgents = 4; 
 % Agents = [1 1
 %     1 N
@@ -72,6 +74,7 @@ hold on;
 
 %% step 2
 Time = 100; 
+drawSingleFlag = 0; 
 for t = 1 : Time
     % pick an Agent
     Picked = randi(nAgents, 1); 
@@ -84,11 +87,38 @@ for t = 1 : Time
     p_ON = exp(V_ON/T) / Z; 
     new_Status = binornd(1, p_ON); 
     if(Status(Picked) ~= new_Status)
+        drawSingleFlag = 1; 
         Status(Picked) = new_Status; 
+        CoverageMap = zeros(M, N);
         CoverageMap = setCoverageMap(Map, Agents, Status, NEG);
     end
     Coverage_score(t) = get_allscore(Map, CoverageMap, Agents, Status);
-    stem(t+1, Coverage_score(t)); 
+    % for debug
+    subplot(2,2,1);
+    stem(t+1, Coverage_score(t));
+    hold on; 
+    if(t > 1)
+        stem(t, Coverage_score(t-1)); 
+    end
+     
+    
+    % plot interpolated heatmap 'Map'
+    subplot(2,2,2);
+    plot_interpolated_Map( Map, interpolation_accuracy );
+    hold on; 
+
+    % plot agents and their status on heatMap 'Map'
+    plot_agents_and_status(Agents, Status, interpolation_accuracy); 
+    if(drawSingleFlag == 1)
+        drawSingleFlag = 0; 
+        % plot picked agent at this round
+        plot_single_agent_and_status(Agents(Picked, : ), new_Status, interpolation_accuracy); 
+    end
+    
+    % plot coverage map
+    subplot(2,2,3);
+    plot_coverageMap(CoverageMap); 
+    close all; 
 end
 
 %% step 3: plot
@@ -99,3 +129,7 @@ hold on;
 
 % plot agents and their status on heatMap 'Map'
 plot_agents_and_status(Agents, Status, interpolation_accuracy);
+
+% stem couverage scores
+fig = figure;
+stem(Coverage_score);
