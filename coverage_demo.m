@@ -78,21 +78,55 @@ drawSingleFlag = 0;
 for t = 1 : Time
     % pick an Agent
     Picked = randi(nAgents, 1); 
-    % compute his score when ON/OFF 
-    [V_ON, V_OFF] = get_agentscore(Map, CoverageMap, Agents, Picked); 
-    % change the Status in probability, and update related data (Map and so
-    % on) 
-    T = 10; % parameter
-    Z = exp(V_ON/T) + exp(V_OFF/T); 
-    p_ON = exp(V_ON/T) / Z; 
-    new_Status = binornd(1, p_ON); 
-    if(Status(Picked) ~= new_Status)
-        drawSingleFlag = 1; 
-        Status(Picked) = new_Status; 
-        CoverageMap = zeros(M, N);
-        CoverageMap = setCoverageMap(Map, Agents, Status, NEG);
+    % --------------------------------------
+    % Strategies: 
+    % A. ON/ OFF
+    % B. move U/D/L/R
+    % Only chose one strategy 
+    % --------------------------------------
+%     % A. ON/ OFF
+%     % compute his score when ON/OFF 
+%     [V_ON, V_OFF] = get_agentscore(Map, CoverageMap, Agents, Picked); 
+%     % change the Status in probability, and update related data (Map and so
+%     % on) 
+%     T = 10; % parameter
+%     Z = exp(V_ON/T) + exp(V_OFF/T); 
+%     p_ON = exp(V_ON/T) / Z; 
+%     new_Status = binornd(1, p_ON); 
+%     if(Status(Picked) ~= new_Status)
+%         drawSingleFlag = 1; 
+%         Status(Picked) = new_Status; 
+%         CoverageMap = zeros(M, N);
+%         CoverageMap = setCoverageMap(Map, Agents, Status, NEG);
+%     end
+    
+    % B. move U/D/L/R
+    % compute his score when going to U/D/L/R
+    [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG); 
+    T = 10; 
+    Z = exp(V_Up/T) + exp(V_Down/T) + exp(V_Left/T) + exp(V_Right/T) + exp(V_Stay/T);
+    p = [exp(V_Up/T)/Z  exp(V_Down/T)/Z  exp(V_Left/T)/Z  exp(V_Right/T)/Z  exp(V_Stay/T)/Z];
+    new_direction = mnrnd(1,p);
+    new_Status = 1; 
+    if(new_direction(5) ~= 1)% going somewhere
+       drawSingleFlag = 1;
+       move_direction_number = find(new_direction);
+       switch move_direction_number
+           case 1
+               Agents(Picked, 1) = Agents(Picked, 1) -1; 
+           case 2
+               Agents(Picked, 1) = Agents(Picked, 1) +1;
+           case 3
+               Agents(Picked, 2) = Agents(Picked, 2) -1;
+           otherwise
+               Agents(Picked, 2) = Agents(Picked, 2) +1;
+       end
+       CoverageMap = zeros(M, N);
+       CoverageMap = setCoverageMap(Map, Agents, Status, NEG);
     end
+    
     Coverage_score(t) = get_allscore(Map, CoverageMap, Agents, Status);
+    
     % for debug
     subplot(2,2,1);
     stem(t+1, Coverage_score(t));
