@@ -53,15 +53,32 @@ Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
 nAgents = 16; 
 % set up agents position and status
 Agents = [randi(M,[nAgents,1]),randi(N,[nAgents,1])]; % Agents(k, 1) is x, Agents(k, 2) is y
-%%
+
 % Status = randi(2,[nAgents, 1])-ones(nAgents, 1); 
 Status =ones(nAgents, 1);
-% nAgents = 4; 
+% nAgents = 4;
 % Agents = [1 1
 %     1 N
 %     M 1
 %     M N];
 % Status = randi(2,[nAgents, 1]) - ones(nAgents, 1);
+
+% plot interpolated heatmap 'Map'
+fig = figure;
+plot_interpolated_Map( Map, interpolation_accuracy );
+hold on; 
+
+% plot agents and their status on heatMap 'Map'
+plot_agents_and_status(Agents, Status, interpolation_accuracy);
+title('init positions'); 
+
+initAgents = Agents; 
+initStatus = Status; 
+%%
+
+% recover init settings
+Agents = initAgents; 
+Status = initStatus; 
 
 % set a CoverageMap for this, CoverageMap is defined in
 % get_agentscore()
@@ -69,12 +86,13 @@ NEG = 2;
 CoverageMap = setCoverageMap(Map, Agents, Status, NEG); 
 
 Coverage_score(1) = get_allscore(Map, CoverageMap, Agents, Status);
-figure, stem(1, Coverage_score(1)); % This Coverage_score(1) will be override then
-hold on; 
+% figure, stem(1, Coverage_score(1)); % This Coverage_score(1) will be override then
+% hold on; 
 
 %% step 2
-Time = 100; 
+Time = 2000; 
 drawSingleFlag = 0; 
+max_score = 0; 
 for t = 1 : Time
     % pick an Agent
     Picked = randi(nAgents, 1); 
@@ -89,7 +107,7 @@ for t = 1 : Time
 %     [V_ON, V_OFF] = get_agentscore(Map, CoverageMap, Agents, Picked); 
 %     % change the Status in probability, and update related data (Map and so
 %     % on) 
-%     T = 10; % parameter
+%     T = 1; % parameter
 %     Z = exp(V_ON/T) + exp(V_OFF/T); 
 %     p_ON = exp(V_ON/T) / Z; 
 %     new_Status = binornd(1, p_ON); 
@@ -127,43 +145,66 @@ for t = 1 : Time
     
     Coverage_score(t) = get_allscore(Map, CoverageMap, Agents, Status);
     
-    % for debug
-    subplot(2,2,1);
-    stem(t+1, Coverage_score(t));
-    hold on; 
-    if(t > 1)
-        stem(t, Coverage_score(t-1)); 
-    end
-     
-    
-    % plot interpolated heatmap 'Map'
-    subplot(2,2,2);
-    plot_interpolated_Map( Map, interpolation_accuracy );
-    hold on; 
-
-    % plot agents and their status on heatMap 'Map'
-    plot_agents_and_status(Agents, Status, interpolation_accuracy); 
-    if(drawSingleFlag == 1)
-        drawSingleFlag = 0; 
-        % plot picked agent at this round
-        plot_single_agent_and_status(Agents(Picked, : ), new_Status, interpolation_accuracy); 
+    % find the sensor locations when max score is reached and display it at
+    % last
+    if(max_score < Coverage_score(t))
+        max_t = t; 
+        max_score = Coverage_score(t); 
+        maxCoverageMap = CoverageMap; 
+        maxAgents = Agents; 
+        maxStatus=  Status; 
     end
     
-    % plot coverage map
-    subplot(2,2,3);
-    plot_coverageMap(CoverageMap); 
-    close all; 
+%     % for debug
+%     subplot(2,2,1);
+%     stem(t+1, Coverage_score(t));
+%     hold on; 
+%     if(t > 1)
+%         stem(t, Coverage_score(t-1)); 
+%     end
+%      
+%     
+%     % plot interpolated heatmap 'Map'
+%     subplot(2,2,2);
+%     plot_interpolated_Map( Map, interpolation_accuracy );
+%     hold on; 
+% 
+%     % plot agents and their status on heatMap 'Map'
+%     plot_agents_and_status(Agents, Status, interpolation_accuracy); 
+%     if(drawSingleFlag == 1)
+%         drawSingleFlag = 0; 
+%         % plot picked agent at this round
+%         plot_single_agent_and_status(Agents(Picked, : ), new_Status, interpolation_accuracy); 
+%     end
+%     
+%     % plot coverage map
+%     subplot(2,2,3);
+%     plot_coverageMap(CoverageMap); 
+%     close all; 
 end
 
 %% step 3: plot
-% plot interpolated heatmap 'Map'
 
+% plt max Map
+% plot interpolated heatmap 'Map'
+fig = figure;
+plot_interpolated_Map( Map, interpolation_accuracy );
+hold on; 
+% plot agents and their status on heatMap 'Map'
+plot_agents_and_status(maxAgents, maxStatus, interpolation_accuracy);
+title('max positions'); 
+   
+
+% plot interpolated heatmap 'Map'
+fig = figure;
 plot_interpolated_Map( Map, interpolation_accuracy );
 hold on; 
 
 % plot agents and their status on heatMap 'Map'
 plot_agents_and_status(Agents, Status, interpolation_accuracy);
+title('end positions');
 
 % stem couverage scores
 fig = figure;
 stem(Coverage_score);
+title('scores');
