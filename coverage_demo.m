@@ -33,8 +33,8 @@ clc;
 % Parameter settings
 %--------------------------------------
 % size of arena
-M = 10; 
-N = 16; 
+M = 15; 
+N = 10; 
 % distribution for resource allocation
 mu = 10; 
 sigma = 4; 

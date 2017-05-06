@@ -21,7 +21,7 @@ V_ON = Map(x, y) * CoverageMap(x, y);
 %     V_ON = V_ON + Map(x, y-1);
 % end
 
-% Agent knows all neighbours
+% Agent knows all neighbours (in 2 hops)
 if( x  < m)
     V_ON = V_ON + Map(x+1, y) * CoverageMap(x+1, y);
 end
