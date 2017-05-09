@@ -33,8 +33,8 @@ clc;
 % Parameter settings
 %--------------------------------------
 % size of arena
-M = 15; 
-N = 10; 
+M = 20; 
+N = 16; 
 % distribution for resource allocation
 mu = 10; 
 sigma = 4; 
@@ -90,7 +90,7 @@ Coverage_score(1) = get_allscore(Map, CoverageMap, Agents, Status);
 % hold on; 
 
 %% step 2
-Time = 2000; 
+Time = 1000; 
 drawSingleFlag = 0; 
 max_score = 0; 
 for t = 1 : Time
@@ -107,7 +107,7 @@ for t = 1 : Time
 %     [V_ON, V_OFF] = get_agentscore(Map, CoverageMap, Agents, Picked); 
 %     % change the Status in probability, and update related data (Map and so
 %     % on) 
-%     T = 1; % parameter
+%     T = 10; % parameter
 %     Z = exp(V_ON/T) + exp(V_OFF/T); 
 %     p_ON = exp(V_ON/T) / Z; 
 %     new_Status = binornd(1, p_ON); 
@@ -121,7 +121,7 @@ for t = 1 : Time
     % B. move U/D/L/R
     % compute his score when going to U/D/L/R
     [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG); 
-    T = 10; 
+    T = 10/(t^2)+1; 
     Z = exp(V_Up/T) + exp(V_Down/T) + exp(V_Left/T) + exp(V_Right/T) + exp(V_Stay/T);
     p = [exp(V_Up/T)/Z  exp(V_Down/T)/Z  exp(V_Left/T)/Z  exp(V_Right/T)/Z  exp(V_Stay/T)/Z];
     new_direction = mnrnd(1,p);
