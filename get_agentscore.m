@@ -9,6 +9,9 @@ V_ON = Map(x, y) * CoverageMap(x, y);
 
 sidecoverCoeff = 0.8; 
 
+% TODO
+% simulate different cost while moving
+
 % % Agent only knows himself
 % if( x + 1 < 11)
 %     V_ON = V_ON + Map(x+1, y);
