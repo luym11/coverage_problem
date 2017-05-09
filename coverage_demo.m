@@ -93,10 +93,10 @@ Coverage_score(1) = get_allscore(Map, CoverageMap, Agents, Status);
 Time = 1000; 
 
 % init Traj
-Traj = cell(nAgents, Time);
-for i = 1:nAgents
-    Traj{i, 1} = Agents(i, :);
-end
+Traj_x = Agents(:, 1); 
+Traj_y = Agents(:, 2); 
+% init Agent select counter
+SelectedNum = zeros(nAgents, 1); 
 
 %% step 2
 
@@ -105,6 +105,7 @@ max_score = 0;
 for t = 1 : Time
     % pick an Agent
     Picked = randi(nAgents, 1); 
+    SelectedNum(Picked) = SelectedNum(Picked) + 1; 
     % --------------------------------------
     % Strategies: 
     % A. ON/ OFF
@@ -148,10 +149,11 @@ for t = 1 : Time
            otherwise
                Agents(Picked, 2) = Agents(Picked, 2) +1;
        end
-       Traj{Picked, t} = Agents(Picked, :);
        CoverageMap = zeros(M, N);
        CoverageMap = setCoverageMap(Map, Agents, Status, NEG);
     end
+    Traj_x(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 1);
+    Traj_y(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 2);
     
     Coverage_score(t) = get_allscore(Map, CoverageMap, Agents, Status);
     
