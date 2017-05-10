@@ -47,6 +47,7 @@ interpolation_accuracy = 5;
 Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
 % plot the score Map
 % mesh(1:M, 1:N, Map); 
+setBigAreaResource_testversion;
 
 % init, Agents and Status
 % number of agents
