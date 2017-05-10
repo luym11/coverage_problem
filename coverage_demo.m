@@ -214,14 +214,14 @@ title('max positions');
 fig = figure;
 plot_interpolated_Map( Map, interpolation_accuracy );
 hold on; 
-% plot agents and their status on heatMap 'Map'
-plot_agents_and_status(Agents, Status, interpolation_accuracy);
 % draw Trajs
 if(drawTrajFlag == 1)
     for i = 1:nAgents
         drawTraj( Traj_x, Traj_y, i, interpolation_accuracy )
     end
 end
+% plot agents and their status on heatMap 'Map'
+plot_agents_and_status(Agents, Status, interpolation_accuracy);
 title('end positions');
 
 % stem couverage scores
