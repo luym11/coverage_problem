@@ -63,17 +63,17 @@ Status =ones(nAgents, 1);
 %     M N];
 % Status = randi(2,[nAgents, 1]) - ones(nAgents, 1);
 
+initAgents = Agents; 
+initStatus = Status; 
+
 % plot interpolated heatmap 'Map'
 fig = figure;
 plot_interpolated_Map( Map, interpolation_accuracy );
 hold on; 
 
 % plot agents and their status on heatMap 'Map'
-plot_agents_and_status(Agents, Status, interpolation_accuracy);
+plot_agents_and_status(initAgents, initStatus, interpolation_accuracy);
 title('init positions'); 
-
-initAgents = Agents; 
-initStatus = Status; 
 %%
 
 % recover init settings
@@ -93,14 +93,15 @@ Coverage_score(1) = get_allscore(Map, CoverageMap, Agents, Status);
 Time = 1000; 
 
 % init Traj
-Traj_x = Agents(:, 1); 
-Traj_y = Agents(:, 2); 
+Traj_x(:, 1) = Agents(:, 2); 
+Traj_y(:, 1) = Agents(:, 1); 
 % init Agent select counter
 SelectedNum = zeros(nAgents, 1); 
 
 %% step 2
 
 drawSingleFlag = 0; 
+drawTrajFlag = 0;
 max_score = 0; 
 for t = 1 : Time
     % pick an Agent
@@ -127,6 +128,7 @@ for t = 1 : Time
 %         CoverageMap = zeros(M, N);
 %         CoverageMap = setCoverageMap(Map, Agents, Status, NEG);
 %     end
+%     drawTrajFlag = 0;
     
     % B. move U/D/L/R
     % compute his score when going to U/D/L/R
@@ -152,8 +154,10 @@ for t = 1 : Time
        CoverageMap = zeros(M, N);
        CoverageMap = setCoverageMap(Map, Agents, Status, NEG);
     end
-    Traj_x(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 1);
-    Traj_y(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 2);
+    % use matrix coordinate for Traj_x
+    Traj_x(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 2);
+    Traj_y(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 1);
+    drawTrajFlag = 1;
     
     Coverage_score(t) = get_allscore(Map, CoverageMap, Agents, Status);
     
@@ -206,14 +210,18 @@ hold on;
 plot_agents_and_status(maxAgents, maxStatus, interpolation_accuracy);
 title('max positions'); 
    
-
-% plot interpolated heatmap 'Map'
+% plot interpolated heatmap 'Map' and Trajactory
 fig = figure;
 plot_interpolated_Map( Map, interpolation_accuracy );
 hold on; 
-
 % plot agents and their status on heatMap 'Map'
 plot_agents_and_status(Agents, Status, interpolation_accuracy);
+% draw Trajs
+if(drawTrajFlag == 1)
+    for i = 1:nAgents
+        drawTraj( Traj_x, Traj_y, i, interpolation_accuracy )
+    end
+end
 title('end positions');
 
 % stem couverage scores
