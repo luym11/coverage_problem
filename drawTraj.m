@@ -19,7 +19,7 @@ function drawTraj( Traj_x, Traj_y, i, interpolation_a )
             if(Traj_plot_x(i, j) == 0)
                 break;
             end
-            plot([Traj_plot_x(i, j-1),Traj_plot_x(i, j)], [Traj_plot_y(i, j-1),Traj_plot_y(i, j)],'--','LineWidth',2);
+            plot([Traj_plot_x(i, j-1),Traj_plot_x(i, j)], [Traj_plot_y(i, j-1),Traj_plot_y(i, j)],color(mod(i, 7)+1),'LineWidth',2);
             % j
         end
     end
