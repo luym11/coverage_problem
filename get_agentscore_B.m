@@ -5,7 +5,7 @@ function [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, Coverag
     m = size(Map, 1); 
     n = size(Map, 2); 
     % simulate different cost for different preference for cost weightings
-    anisotropicEffect = [1 1 1 1 0.5];
+    anisotropicEffect = [0.6 1 1 1 1];
     
     [V_Stay, ~] = get_agentscore(Map, CoverageMap, Agents, Picked);
     V_Stay  = V_Stay * anisotropicEffect(1);

@@ -36,7 +36,7 @@ clc;
 M = 20; 
 N = 16; 
 % distribution for resource allocation
-mu = 10; 
+mu = 6; 
 sigma = 4; 
 
 % interpolated plot's accuracy
@@ -45,13 +45,14 @@ interpolation_accuracy = 5;
 
 % init, Map of interest, assigned values by a normal distribution
 Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
+Map = drifting_environment( Map, 20, 4, 3, 2, 24); 
 % plot the score Map
 % mesh(1:M, 1:N, Map); 
-setBigAreaResource_testversion;
+% setBigAreaResource_testversion;
 
 % init, Agents and Status
 % number of agents
-nAgents = 16; 
+nAgents = 20; 
 % set up agents position and status
 Agents = [randi(M,[nAgents,1]),randi(N,[nAgents,1])]; % Agents(k, 1) is x, Agents(k, 2) is y
 
@@ -83,7 +84,7 @@ Status = initStatus;
 
 % set a CoverageMap for this, CoverageMap is defined in
 % get_agentscore()
-NEG = 2; 
+NEG = 1; 
 CoverageMap = setCoverageMap(Map, Agents, Status, NEG); 
 
 Coverage_score(1) = get_allscore(Map, CoverageMap, Agents, Status);

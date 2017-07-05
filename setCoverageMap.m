@@ -5,7 +5,7 @@ function coverageMap = setCoverageMap(Map, Agents, Status, NEG)
     n = size(Map, 2); 
     A = size(ActiveAgents, 1);
     
-    coverageMap = zeros(m, n); % value of CoverageMap is 2 for the agents, 1 for "cevered area", 0 for uncover
+    coverageMap = zeros(m, n); % value of CoverageMap is 2 for the agents, 1 for "covered area", 0 for uncover, -NEG for overlap
     
 %     % Step 1, place all agents first
 %     IND_Agents = sub2ind([M, N], ActiveAgents(:, 1), ActiveAgents(:, 2)); 
