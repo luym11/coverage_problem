@@ -44,7 +44,8 @@ interpolation_accuracy = 5;
 
 
 % init, Map of interest, assigned values by a normal distribution
-Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
+% Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
+Map = zeros(M,N);
 Map = drifting_environment( Map, 1, 4, 3, 2, 24); 
 % plot the score Map
 % mesh(1:M, 1:N, Map); 
@@ -52,7 +53,7 @@ Map = drifting_environment( Map, 1, 4, 3, 2, 24);
 
 % init, Agents and Status
 % number of agents
-nAgents = 10; 
+nAgents = 6; 
 % set up agents position and status
 Agents = [randi(M,[nAgents,1]),randi(N,[nAgents,1])]; % Agents(k, 1) is x, Agents(k, 2) is y
 
@@ -101,7 +102,7 @@ Traj_y(:, 1) = Agents(:, 1);
 SelectedNum = zeros(nAgents, 1); 
 
 %% step 2
-for kk = 1 : 10
+for kk = 1 : 20
     drawSingleFlag = 0; 
     drawTrajFlag = 0;
     max_score = 0; 
@@ -205,33 +206,35 @@ for kk = 1 : 10
 
     % plt max Map
     % plot interpolated heatmap 'Map'
+    fig = figure;
+%     subplot(4,3,kk+1);
+    plot_interpolated_Map( Map, interpolation_accuracy );
+    hold on; 
+    % plot agents and their status on heatMap 'Map'
+    plot_agents_and_status(maxAgents, maxStatus, interpolation_accuracy);
+    title('max positions'); 
+
+%     % plot interpolated heatmap 'Map' and Trajactory
 %     fig = figure;
 %     plot_interpolated_Map( Map, interpolation_accuracy );
 %     hold on; 
+%     % draw Trajs
+% %     if(drawTrajFlag == 1)
+% %         for i = 1:nAgents
+% %             drawTraj( Traj_x, Traj_y, i, interpolation_accuracy )
+% %         end
+% %     end
 %     % plot agents and their status on heatMap 'Map'
-%     plot_agents_and_status(maxAgents, maxStatus, interpolation_accuracy);
-%     title('max positions'); 
+%     plot_agents_and_status(Agents, Status, interpolation_accuracy);
+%     title('end positions');
 
-    % plot interpolated heatmap 'Map' and Trajactory
-    fig = figure;
-    plot_interpolated_Map( Map, interpolation_accuracy );
-    hold on; 
-    % draw Trajs
-%     if(drawTrajFlag == 1)
-%         for i = 1:nAgents
-%             drawTraj( Traj_x, Traj_y, i, interpolation_accuracy )
-%         end
-%     end
-    % plot agents and their status on heatMap 'Map'
-    plot_agents_and_status(Agents, Status, interpolation_accuracy);
-    title('end positions');
-
-%     % stem couverage scores
+%     % stem coverage scores
 %     fig = figure;
 %     stem(Coverage_score);
 %     title('scores');
     
     % map changing
-    Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
+    % Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
+    Map = zeros(M,N); 
     Map = drifting_environment( Map, kk, 4, 3, 2, 24); 
 end
