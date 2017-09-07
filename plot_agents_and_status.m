@@ -1,5 +1,5 @@
 function plot_agents_and_status( agents, status, interpolation_a)
-
+    color='bgrcwyk';
     for i = 1 : size(agents, 1)
         Agents_plot(i, :) = agents(i, :) + (agents(i, :)-[1 1]) .* ( 2^interpolation_a - 1 );
         if(status(i) == 1)
@@ -8,7 +8,7 @@ function plot_agents_and_status( agents, status, interpolation_a)
             'LineWidth',2,...
             'MarkerSize',10,...
             'MarkerEdgeColor','b',...
-            'MarkerFaceColor',[0.5,0.5,0.5]); 
+            'MarkerFaceColor',color(mod(i, 7)+1)); 
 
             % draw a circle to show coverage area by that agent
             theta = linspace(0,2*pi);

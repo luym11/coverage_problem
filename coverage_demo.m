@@ -103,13 +103,31 @@ SelectedNum = zeros(nAgents, 1);
 
 %% step 2
 for kk = 1 : 20
+    
+    % plot init positions in this round
+    fig = figure;
+    subplot(2,2,1);
+    plot_interpolated_Map( Map, interpolation_accuracy );
+    hold on; 
+    % plot agents and their status on heatMap 'Map'
+    plot_agents_and_status(Agents, Status, interpolation_accuracy);
+    title('start positions');
+    
     drawSingleFlag = 0; 
     drawTrajFlag = 0;
     max_score = 0; 
+    
+    traj_x_draw_this_round=[];
+    traj_y_draw_this_round=[];
+    traj_x_draw_this_round(:, 1) = Agents(:, 2); 
+    traj_y_draw_this_round(:, 1) = Agents(:, 1); 
+    SelectedNum_this_round = zeros(nAgents, 1); 
+    
     for t = 1 : Time
         % pick an Agent
         Picked = randi(nAgents, 1); 
-        SelectedNum(Picked) = SelectedNum(Picked) + 1; 
+        SelectedNum(Picked) = SelectedNum(Picked) + 1;
+        SelectedNum_this_round(Picked) = SelectedNum_this_round(Picked) + 1; 
         % --------------------------------------
         % Strategies: 
         % A. ON/ OFF
@@ -160,6 +178,8 @@ for kk = 1 : 20
         % use matrix coordinate for Traj_x
         Traj_x(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 2);
         Traj_y(Picked, SelectedNum(Picked) + 1) = Agents(Picked, 1);
+        traj_x_draw_this_round(Picked, SelectedNum_this_round(Picked) + 1) = Agents(Picked, 2);
+        traj_y_draw_this_round(Picked, SelectedNum_this_round(Picked) + 1) = Agents(Picked, 1);
         drawTrajFlag = 1;
 
         Coverage_score(t) = get_allscore(Map, CoverageMap, Agents, Status);
@@ -206,32 +226,41 @@ for kk = 1 : 20
 
     % plt max Map
     % plot interpolated heatmap 'Map'
-    fig = figure;
-%     subplot(4,3,kk+1);
+  
+%     subplot(2,2,2);
+%     plot_interpolated_Map( Map, interpolation_accuracy );
+%     hold on; 
+%     % plot agents and their status on heatMap 'Map'
+%     plot_agents_and_status(maxAgents, maxStatus, interpolation_accuracy);
+%     title('max positions'); 
+
+    subplot(2,2,2);
     plot_interpolated_Map( Map, interpolation_accuracy );
     hold on; 
     % plot agents and their status on heatMap 'Map'
-    plot_agents_and_status(maxAgents, maxStatus, interpolation_accuracy);
-    title('max positions'); 
+    plot_agents_and_status(Agents, Status, interpolation_accuracy);
+    title('end positions'); 
 
-%     % plot interpolated heatmap 'Map' and Trajactory
-%     fig = figure;
-%     plot_interpolated_Map( Map, interpolation_accuracy );
-%     hold on; 
-%     % draw Trajs
-% %     if(drawTrajFlag == 1)
-% %         for i = 1:nAgents
-% %             drawTraj( Traj_x, Traj_y, i, interpolation_accuracy )
-% %         end
-% %     end
-%     % plot agents and their status on heatMap 'Map'
-%     plot_agents_and_status(Agents, Status, interpolation_accuracy);
-%     title('end positions');
+    % plot interpolated heatmap 'Map' and Trajactory
+%    fig = figure;
+    subplot(2,2,3);
+    plot_interpolated_Map( Map, interpolation_accuracy );
+    hold on; 
+    % draw Trajs
+    if(drawTrajFlag == 1)
+        for i = 1:nAgents
+            drawTraj( traj_x_draw_this_round, traj_y_draw_this_round, i, interpolation_accuracy )
+        end
+    end
+    % plot agents and their status on heatMap 'Map'
+    plot_agents_and_status(Agents, Status, interpolation_accuracy);
+    title('end positions with traj');
 
-%     % stem coverage scores
-%     fig = figure;
-%     stem(Coverage_score);
-%     title('scores');
+    % stem coverage scores
+%    fig = figure;
+    subplot(2,2,4);
+    stem(Coverage_score);
+    title('scores');
     
     % map changing
     % Map = abs(normrnd(mu, sigma, [M, N])); % all positive abs()
