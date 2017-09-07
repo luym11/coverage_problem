@@ -7,7 +7,7 @@ n = size(Map, 2);
 
 V_ON = Map(x, y) * CoverageMap(x, y);
 
-sidecoverCoeff = 0.8; 
+sidecoverCoeff = 0.5; % consensus with Gazebo, where 2 and 1 are used
 
 
 

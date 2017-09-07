@@ -29,6 +29,9 @@ clear all;
 close all; 
 clc; 
 
+% convex one zone flag
+con_1_f = true; 
+
 %--------------------------------------
 % Parameter settings
 %--------------------------------------
@@ -102,7 +105,7 @@ Traj_y(:, 1) = Agents(:, 1);
 SelectedNum = zeros(nAgents, 1); 
 
 %% step 2
-for kk = 1 : 20
+for kk = 1 : 10
     
     % plot init positions in this round
     fig = figure;
@@ -153,7 +156,7 @@ for kk = 1 : 20
 
         % B. move U/D/L/R
         % compute his score when going to U/D/L/R
-        [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG); 
+        [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG, con_1_f); 
         T = 10/(t^2)+1; 
         Z = exp(V_Up/T) + exp(V_Down/T) + exp(V_Left/T) + exp(V_Right/T) + exp(V_Stay/T);
         p = [exp(V_Up/T)/Z  exp(V_Down/T)/Z  exp(V_Left/T)/Z  exp(V_Right/T)/Z  exp(V_Stay/T)/Z];
