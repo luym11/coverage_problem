@@ -1,9 +1,13 @@
-function [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG, convex_one_flag)
+function [V_Up, V_Down, V_Left, V_Right, V_Stay, a_Agents, a_t, a_exchanged_info_status, a_Coverage_score] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG, convex_one_flag, t, exchanged_info_status, Coverage_score)
     %% compute picked agent's score at time t, using information of others at (t-1)
     x = Agents(Picked, 1); 
     y = Agents(Picked, 2); 
     m = size(Map, 1); 
     n = size(Map, 2); 
+    a_Agents = Agents; 
+    a_t = t; 
+    a_exchanged_info_status = exchanged_info_status;
+    a_Coverage_score = Coverage_score; 
     % simulate different cost for different preference for cost weightings
     anisotropicEffect = [0.6 1 1 1 1]; % Ordered as: stay, up, down, left, right
     
@@ -17,6 +21,21 @@ function [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, Coverag
     % need to set a virtual coverageMap for each calculation
     coverageMap = CoverageMap;
     
+    % add info sharing process
+    if(Map(x, y) < 5 && exchanged_info_status(Picked) == 0 && mod(t, 100) > 0 && mod(t, 100) < 10 )
+        a_exchanged_info_status(Picked) = 1; 
+        all_agents_current_scores = get_agent_scores_array(  Map, CoverageMap, Agents, Status );
+        [maxScore, maxIndex] = max(all_agents_current_scores); 
+        if(maxScore > 3)% not too small
+            % global changes
+            a_Agents(Picked, 1) = Agents(maxIndex, 1); 
+            a_Agents(Picked, 2) = Agents(maxIndex, 2);
+            add_t = round(norm(Agents(Picked) - Agents(maxIndex)));
+            a_t = t + add_t; 
+            end_scores = ones(1, add_t)*Coverage_score(end); 
+            a_Coverage_score =[a_Coverage_score end_scores];
+        end
+    end
     
     
     agents = Agents; 

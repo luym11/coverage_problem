@@ -104,6 +104,9 @@ Traj_y(:, 1) = Agents(:, 1);
 % init Agent select counter
 SelectedNum = zeros(nAgents, 1); 
 
+% init Marcopolo status array
+exchanged_info_status = zeros(nAgents, 1);
+
 %% step 2
 for kk = 1 : 10
     
@@ -126,7 +129,8 @@ for kk = 1 : 10
     traj_y_draw_this_round(:, 1) = Agents(:, 1); 
     SelectedNum_this_round = zeros(nAgents, 1); 
     
-    for t = 1 : Time
+    t = 1; 
+    while t <= 1000
         % pick an Agent
         Picked = randi(nAgents, 1); 
         SelectedNum(Picked) = SelectedNum(Picked) + 1;
@@ -156,7 +160,10 @@ for kk = 1 : 10
 
         % B. move U/D/L/R
         % compute his score when going to U/D/L/R
-        [V_Up, V_Down, V_Left, V_Right, V_Stay] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG, con_1_f); 
+        if(mod(t, 100) == 11)
+            exchanged_info_status = zeros(nAgents, 1); 
+        end
+        [V_Up, V_Down, V_Left, V_Right, V_Stay, Agents, t, exchanged_info_status, Coverage_score] = get_agentscore_B(Map, CoverageMap, Agents, Status, Picked, NEG, con_1_f, t, exchanged_info_status, Coverage_score); 
         T = 10/(t^2)+1; 
         Z = exp(V_Up/T) + exp(V_Down/T) + exp(V_Left/T) + exp(V_Right/T) + exp(V_Stay/T);
         p = [exp(V_Up/T)/Z  exp(V_Down/T)/Z  exp(V_Left/T)/Z  exp(V_Right/T)/Z  exp(V_Stay/T)/Z];
@@ -223,6 +230,7 @@ for kk = 1 : 10
     %     subplot(2,2,3);
     %     plot_coverageMap(CoverageMap); 
     %     close all; 
+    t = t + 1; 
     end
 
     %% step 3: plot
